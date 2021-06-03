@@ -89,8 +89,8 @@ if __name__ == '__main__':
     start = int(time.time() * 1000)
 
     grh = NdnRoutingHelper(ndn.net, 'udp', 'hr')
-    # for host in ndn.net.hosts:
-    #     grh.addOrigin([ndn.net[host.name]], ["/ndn/svs/"])
+    for host in ndn.net.hosts:
+        grh.addOrigin([ndn.net[host.name]], ["/ndn/broadcast/"])
 
     grh.calculateNPossibleRoutes()
 
@@ -100,7 +100,7 @@ if __name__ == '__main__':
     time.sleep(10)
 
     # Install TShark on WU node
-    ts = AppManager(ndn, [ndn.net.hosts["wu"]], Tshark, singleLogFile=True)
+    ts = AppManager(ndn, [ndn.net["wu"]], Tshark, singleLogFile=True)
 
     MiniNDNCLI(ndn.net)
 
