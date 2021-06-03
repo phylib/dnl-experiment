@@ -40,6 +40,8 @@ from minindn.apps.nfd import Nfd
 from minindn.apps.tshark import Tshark
 from minindn.helpers.ndn_routing_helper import NdnRoutingHelper
 from mininet.node import OVSController
+from minindn.apps.nlsr import Nlsr
+from minindn.helpers.experiment import Experiment
 
 from tqdm import tqdm
 
@@ -88,14 +90,20 @@ if __name__ == '__main__':
     info('Adding static routes to NFD\n')
     start = int(time.time() * 1000)
 
-    grh = NdnRoutingHelper(ndn.net, 'udp', 'hr')
-    for host in ndn.net.hosts:
-        grh.addOrigin([ndn.net[host.name]], ["/ndn/broadcast/"])
+    # grh = NdnRoutingHelper(ndn.net, 'udp', 'hr')
+    # for host in ndn.net.hosts:
+    #     grh.addOrigin([ndn.net[host.name]], ["/ndn/broadcast/"])
+    #
+    # grh.calculateNPossibleRoutes()
+    nlsrs = AppManager(ndn, ndn.net.hosts, Nlsr)
 
-    grh.calculateNPossibleRoutes()
+    Experiment.checkConvergence(ndn, ndn.net.hosts, 30, quit=False)
 
     end = int(time.time() * 1000)
     info('Added static routes to NFD in {} ms\n'.format(end - start))
+    for node in ndn.net.hosts:
+        node.cmd('nlsrc advertise /ndn/broadcast/')
+
     info('Sleeping 10 seconds\n')
     time.sleep(10)
 
